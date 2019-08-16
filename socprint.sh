@@ -52,7 +52,6 @@ break
 done
 
 printer="$printer$mode"
-exit 0
 echo "Submitting $2 for print with $1@sunfire.comp.nus.edu.sg at $printer"
 
 # create a copy
