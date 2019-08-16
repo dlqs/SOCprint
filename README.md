@@ -11,6 +11,6 @@ To print:
 `./socprint.sh <username> <filename>`  
 e.g. `./socprint.sh -c dlee ~/Downloads/tutorial1.pdf`
  
-To download: either clone this repository, or run `wget https://github.com/dlqs/SOCprint/master/socprint.sh`
+To download: either clone this repository, or run `wget https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh`
 
 To use it from outside the source directory: `# ln -s <full path to>/socprint.sh /usr/local/bin`
