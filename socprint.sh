@@ -59,7 +59,7 @@ cp $fullpath "$dirpath/$tempname"
 # transfer over to sunfire server
 scp "$dirpath/$tempname" $1@sunfire.comp.nus.edu.sg:~/
 # print
-ssh $1@sunfire.comp.nus.edu.sg "lpr -P $printer $tempname; echo "===Print Queue==="; lpq -P $printer; rm $tempname; pusage;"
+ssh $1@sunfire.comp.nus.edu.sg "lpr -P $printer $tempname; echo "===Print Queue==="; lpq -P $printer; rm $tempname;"
 # delete copy
 rm "$dirpath/$tempname"
 exit 0
