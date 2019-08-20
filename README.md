@@ -1,15 +1,17 @@
 # Print stuff in SoC
 ### This script copies your print file into your @sunfire.nus.edu.sg account and then sends it to SoC printers.
 
+Works for the four black-and-white and double-sided-capable printers.
+
 ### Requirements
  - Bash
- - A .pdf file
- - A valid sunfire account (You will be asked to log in twice. Your password is not saved.)
+ - A .pdf/.txt file
+ - A valid sunfire account (Your password is not saved.)
  
 ### Usage
 To print:
  - `./socprint.sh <username> <filename>`  
-e.g. `./socprint.sh -c dlee ~/Downloads/tutorial1.pdf`
+e.g. `./socprint.sh dlee ~/Downloads/tutorial1.pdf`
  
 To download:
  - Clone this repository, or
