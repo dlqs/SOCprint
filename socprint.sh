@@ -28,7 +28,7 @@ fi
 
 fullpath="$(realpath "$2")"
 dirpath="$(dirname "$fullpath")"
-echo "Found $dirpath"
+echo "Found $fullpath"
 tempname=".temp.$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 )"
 if [[ ! -f "$fullpath" ]]; then
     echo "Error: Unable to find $fullpath"
@@ -48,7 +48,7 @@ echo "Select a print mode"
 echo "-dx: double side; -sx: single side; -nb: no banner"
 select mode in -dx -sx -nb
 do
-echo "Selected: $printer$mode"
+echo "You will be prompted for your sunfire password. It will not be saved."
 break
 done
 
