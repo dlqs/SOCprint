@@ -27,7 +27,9 @@ elif [[ -z "$1" ]]; then
 fi
 
 fullpath="$(realpath "$2")"
+dirpath="$(dirname "$fullpath")"
 echo "Found $fullpath"
+tempname=".temp.$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 )"
 if [[ ! -f "$fullpath" ]]; then
     echo "Error: Unable to find $fullpath"
     exit 1
