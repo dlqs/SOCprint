@@ -27,9 +27,7 @@ elif [[ -z "$1" ]]; then
 fi
 
 fullpath="$(realpath "$2")"
-dirpath="$(dirname "$fullpath")"
 echo "Found $fullpath"
-tempname=".temp.$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 )"
 if [[ ! -f "$fullpath" ]]; then
     echo "Error: Unable to find $fullpath"
     exit 1
@@ -55,12 +53,6 @@ done
 printer="$printer$mode"
 echo "Submitting $2 for print with $1@sunfire.comp.nus.edu.sg at $printer"
 
-# create a copy
-cp "$fullpath" "$dirpath/$tempname"
-# transfer over to sunfire server
-# scp "$dirpath/$tempname" "$1@sunfire.comp.nus.edu.sg:~/"
 # print
 ssh "$1@sunfire.comp.nus.edu.sg" "cat - > $tempname; lpr -P $printer $tempname; lpq -P $printer; rm $tempname;" < "$fullpath"
-# delete copy
-rm "$dirpath/$tempname"
 exit 0
