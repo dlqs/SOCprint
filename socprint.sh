@@ -1,60 +1,120 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
-  -a | --about )
-    echo 1.0.0
-    exit
-    ;;
-  -h | --help )
-    echo "Usage: $0 <username> <filename>"
-    echo "e.g. $0 dlee ~/Downloads/tutorial.pdf"
-    exit
-    ;;
-esac; shift; done
-if [[ "$1" == '--' ]]; then shift; fi
+set -Eeuo pipefail
 
+export LC_ALL=C
 
-if [[ "$#" != "2" ]]; then
-    echo "Usage: $0 <username> <filename>"
-    echo "Try '$0 --help' for more information"
-    exit 1
-elif [[ $1 = *"@"* ]]; then
-    echo "Error: <username> should not contain @hostname"
-    exit 1
-elif [[ -z "$1" ]]; then
-    echo "Error: <username> should not be empty"
-    exit 1
+host="sunfire.comp.nus.edu.sg"
+default_printqueue="psc008-dx"
+
+usage() {
+  cat <<EOF
+Usage: "${BASH_SOURCE[0]}" [-h] [-v] [-f] -u username -f filename arg1 [arg2...]
+
+A Bash script to print stuff in NUS SoC.
+
+Print command parameters:
+
+-u, --username          Sunfire username (without @sunfire.comp.nus.edu.sg)
+-i, --identity-file     Use provided identity file with ssh
+-f, --file              File to print. Accepts PDFs and text files.
+
+List Printqueue command parameters:
+
+-u, --username          Sunfire username (without @sunfire.comp.nus.edu.sg)
+-i, --identity-file     Use provided identity file with ssh
+-l, --list-printqueue   Show available printqueues
+
+Other options:
+
+-h, --help              Print this help and exit
+EOF
+  exit
+}
+
+msg() {
+  echo >&2 -e "${1-}"
+}
+
+die() {
+  local msg=$1
+  local code=${2-1} # default exit status 1
+  msg "$msg"
+  exit "$code"
+}
+
+parse_params() {
+  # default values of variables set from params
+  identity_file=''
+  printqueue=''
+  list_printqueues=false
+
+  while :; do
+    case "${1-}" in
+    -h | --help) usage ;;
+    -l | --list-printqueues) 
+      list_printqueues=true
+      ;;
+    -i | --identity-file) 
+      identity_file="${2-}" 
+      shift
+      ;;
+    -p | --printqueue) 
+      printqueue="${2-}" 
+      shift
+      ;;
+    -f | --filename) 
+      filename="${2-}" 
+      shift
+      ;;
+    -u | --username)
+      username="${2-}"
+      shift
+      ;;
+    -?*) die "Unknown option: $1" ;;
+    *) break ;;
+    esac
+    shift
+  done
+
+  # check required params and arguments
+  return 0
+}
+
+parse_params "$@"
+
+[[ -z "${username-}" ]] && die "Missing required parameter: -u/--username"
+sshcmd="${username}@${host}"
+if [[ ! -z ${identity_file} ]]; then
+  # Use the ssh identity_file if provided
+  sshcmd="${sshcmd} -i ${identity_file}"
 fi
 
-fullpath="$(realpath "$2")"
-dirpath="$(dirname "$fullpath")"
-echo "Found $fullpath"
-tempname=".temp.$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 )"
-if [[ ! -f "$fullpath" ]]; then
-    echo "Error: Unable to find $fullpath"
-    exit 1
-elif [[ $fullpath != *.pdf ]] && [[ $fullpath != *.txt ]]; then
-    echo "Error: file extension must be a .pdf or .txt"
-    exit 1
+msg "Using ${username}@${host} ..."
+if [[ $list_printqueues == true ]]; then
+  ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
+  exit 0
 fi
 
-echo "Select a printer"
-select printer in psc008 psc011 psts pstsc
-do
-break
-done
+[[ -z "${filename-}" ]] && die "Missing required parameter: -f/--filename"
+[[ ! -f "${filename-}" ]] && die "Error: No such file"
 
-echo "Select a print mode"
-echo "-dx: double side; -sx: single side; -nb: no banner"
-select mode in -dx -sx -nb
-do
-echo "You will be prompted for your sunfire password. It will not be saved."
-break
-done
+filetype=$(file -i $filename | cut -f 2 -d ' ')
+[[ $filetype != "application/pdf;" && $filetype != text* ]] && msg "Warning: File is not valid PDF or text. Print behaviour is undefined."
 
-printer="$printer$mode"
-echo "Submitting $2 for print with $1@sunfire.comp.nus.edu.sg at $printer"
+# Generate a random 8 character alphanumeric string *without* tr
+tempname=$(perl -e '@c=("A".."Z","a".."z",0..9);$p.=$c[rand(scalar @c)] for 1..8; print "$p\n"')
+tempname="SOCPrint_${tempname}"
 
-# print
-ssh "$1@sunfire.comp.nus.edu.sg" "cat - > $tempname; lpr -P $printer $tempname; lpq -P $printer; rm $tempname;" < "$fullpath"
+# The long ssh command does this:
+# 1. Copy file to a temporary name on the server
+# 2. Submit it to the print queue via lpr
+# 3. List the print queue via lpq
+# 4. Remove the temporary file
+
+[[ -z "${printqueue-}" ]] && msg "Using default printqueue: ${default_printqueue}" && msg "Hint: To set a different one, use the -p option. To list all, use the -l option."
+printqueue=default_printqueue
+
+ssh $sshcmd "cat - > ${tempname}; lpr -P ${printqueue} ${tempname}; lpq -P ${printqueue}; rm ${tempname};" < "${filename}"
+
 exit 0
