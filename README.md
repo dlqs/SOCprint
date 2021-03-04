@@ -4,7 +4,7 @@ Bash script to print stuff in NUS SoC.
 Requirements: bash, a sunfire account, and connection to SoC wifi.
 
 Usage (copy-pastable one-liner):
-  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash /dev/stdin -u <username> -f <filename> -p <printqueue>
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash -s -- -u <username> -f <filename> -p <printqueue>
 
 Usage (to download and run from any directory):
   sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
