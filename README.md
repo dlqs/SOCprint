@@ -1,48 +1,47 @@
 ```
 Bash script to print stuff in NUS SoC.
 
-Usage (one-liner):
-curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash /dev/stdin -u <username> -f <filename> -p <printqueue>
+Requirements: bash, a sunfire account, and connection to SoC wifi.
 
-Voila! No drivers to mess with.
+Usage (copy-pastable one-liner):
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash /dev/stdin -u <username> -f <filename> -p <printqueue>
 
-Requirements: bash and a sunfire account. You need to be connected to SoC wifi, directly or via VPN.
-You will be prompted for your password by ssh (unless you use the -i option). This script *does not* record/capture your password.
-
-Roughly, this script will:
-1. Using ssh, copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
-2. Submit your job to the printqueue.
-3. List the printqueue. You *should* see your job here. If not, something has gone wrong.
-4. Remove the temporary file.
-
-Parameters
-
+Usage (to download and run from any directory):
+  sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
+  sudo chmod 755 /usr/local/bin/socprint.sh
+  socprint.sh -u <username> -f <filename> -p <printqueue>
+  
+Parameters:
  -u, --username         (required) Sunfire username (without the @sunfire.comp.nus.edu.sg part).
  -i, --identity-file    (optional) Identity file to pass into ssh. If set, avoids interactive password.
  -f, --filename         (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
  -p, --printqueue       (optional to print) Printqueue to send job to. Defaults to psc008-dx.
- -l, --list-printqueues (required to list printqueues) List printqueues. See below.
+ -l, --list-printqueues (required to list printqueues) List printqueues i.e. valid arguments for -p.
 
-Print command example: 
-./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+Print command example:
+  ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
 
 List printqueue command example:
-./socprint.sh -u d-lee -l
+  ./socprint.sh -u d-lee -l
 
-Printqueues
+Roughly speaking, this script will:
+  1. Login to sunfire using ssh. You will be prompted for your password (unless you use the -i option). This script does not save/record your password.
+  2. Copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
+  3. Submit your job to the printqueue.
+  4. List the printqueue. You *should* see your job here. If not, something has gone wrong.
+  5. Remove the temporary file.
 
-You're probably looking for one of these:
- - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
- - COM1 L1, in front of Tech Svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
- - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
+Printqueues:
+  - (you're probably looking for these locations)
+  - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
+  - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
+  - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
 
 The suffixes mean:
- - (no suffix) or -dx: double sided
- - -sx: single sided
+  - (no suffix) or -dx: double sided
+  - -sx: single sided
 
-Complete list of valid printqueues (generated with -l option; last updated 4 March 2021):  
- - Some printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
-
+List of valid printqueues (generated with -l option; last updated 4 March 2021):  
 psts psts-sx psts-dx psts-nb pstsb pstsb-sx pstsb-dx pstsb-nb pstsc pstsc-sx pstsc-dx pstsc-nb psgob psgob-sx psgob-dx psgoc psgoc-sx psgoc-dx 
 psa206 psa206-sx psa206-dx psa403 psa403-sx psa403-dx psa411 psa411-sx psa411-dx psa413 psa413-sx psa413-dx psa421 psa421-sx psa421-dx psa425 
 psa425-sx psa425-dx psa426 psa426-sx psa426-dx psa427 psa427-sx psa427-dx psa501 psa501-sx psa501-dx psa502 psa502-sx psa502-dx psa518 psa518-sx 
@@ -56,5 +55,7 @@ psd109 psd109-sx psd109-dx psd110 psd110-sx psd110-dx psd238 psd238-sx psd238-dx
 psd263-nb-sx psd313 psd313-sx psd313-dx psd313-nb psd313-nb-sx psd404 psd404-sx psd404-dx psd405 psd405-sx psd405-dx psd405-nb psd405-nb-sx 
 psi505 psi505-sx psi505-dx psu102 psu102-sx psu102-dx psx302 psx302-sx psx302-dx psx302-nb psx302-nb-sx psx306 psx306-sx psx306-dx psx342a 
 psx342a-sx psx342a-dx psx342b psx342b-sx psx342b-dx
+
+Source: https://github.com/dlqs/SOCprint
 
 ```

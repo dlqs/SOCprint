@@ -17,44 +17,48 @@ usage() {
   cat <<EOF
 Bash script to print stuff in NUS SoC.
 
-Usage (one-liner):
-curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash /dev/stdin -u <username> -f <filename> -p <printqueue>
+Requirements: bash, a sunfire account, and connection to SoC wifi.
 
-Voila! No drivers to mess with.
+Usage (copy-pastable one-liner):
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash /dev/stdin -u <username> -f <filename> -p <printqueue>
 
-Requirements: bash and a sunfire account. You need to be connected to SoC wifi, directly or via VPN.
-You will be prompted for your password by ssh (unless you use the -i option). This script *does not* record/capture your password.
-
-Roughly, this script will:
-1. Using ssh, copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
-2. Submit your job to the printqueue.
-3. List the printqueue. You *should* see your job here. If not, something has gone wrong.
-4. Remove the temporary file.
-
-Parameters
-
+Usage (to download and run from any directory):
+  sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
+  sudo chmod 755 /usr/local/bin/socprint.sh
+  socprint.sh -u <username> -f <filename> -p <printqueue>
+  
+Parameters:
  -u, --username         (required) Sunfire username (without the @sunfire.comp.nus.edu.sg part).
  -i, --identity-file    (optional) Identity file to pass into ssh. If set, avoids interactive password.
  -f, --filename         (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
  -p, --printqueue       (optional to print) Printqueue to send job to. Defaults to psc008-dx.
- -l, --list-printqueues (required to list printqueues) List printqueues. See below.
+ -l, --list-printqueues (required to list printqueues) List printqueues i.e. valid arguments for -p.
 
 Print command example:
-./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+  ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
 
 List printqueue command example:
-./socprint.sh -u d-lee -l
+  ./socprint.sh -u d-lee -l
 
-Printqueues
+Roughly speaking, this script will:
+  1. Login to sunfire using ssh. You will be prompted for your password (unless you use the -i option). This script does not save/record your password.
+  2. Copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
+  3. Submit your job to the printqueue.
+  4. List the printqueue. You *should* see your job here. If not, something has gone wrong.
+  5. Remove the temporary file.
 
-You're probably looking for one of these:
- - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
- - COM1 L1, in front of Tech Svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
- - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
+Printqueues:
+  - (you're probably looking for these locations)
+  - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
+  - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
+  - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
 
 The suffixes mean:
- - (no suffix) or -dx: double sided
- - -sx: single sided
+  - (no suffix) or -dx: double sided
+  - -sx: single sided
+
+Source: https://github.com/dlqs/SOCprint
+
 EOF
   exit
 }
@@ -104,7 +108,6 @@ parse_params() {
     shift
   done
 
-  # check required params and arguments
   return 0
 }
 
@@ -119,6 +122,7 @@ fi
 
 msg "Using ${username}@${host} ..."
 if [[ $list_printqueues == true ]]; then
+  # Thanks @pengnam for the regex
   ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
   exit 0
 fi
@@ -127,7 +131,7 @@ fi
 [[ ! -f "${filename-}" ]] && die "Error: No such file"
 
 filetype=$(file -i $filename | cut -f 2 -d ' ')
-[[ $filetype != "application/pdf;" && $filetype != text* ]] && msg "Warning: File is not valid PDF or text. Print behaviour is undefined."
+[[ $filetype != "application/pdf;" && $filetype != text* ]] && msg "Warning: File is not PDF or text. Print behaviour is undefined."
 
 # Generate a random 8 character alphanumeric string *without* tr
 tempname=$(perl -e '@c=("A".."Z","a".."z",0..9);$p.=$c[rand(scalar @c)] for 1..8; print "$p\n"')
