@@ -133,12 +133,6 @@ filetype=$(file -i $filename | cut -f 2 -d ' ')
 tempname=$(perl -e '@c=("A".."Z","a".."z",0..9);$p.=$c[rand(scalar @c)] for 1..8; print "$p\n"')
 tempname="SOCPrint_${tempname}"
 
-# The long ssh command does this:
-# 1. Copy file to a temporary name on the server
-# 2. Submit it to the print queue via lpr
-# 3. List the print queue via lpq
-# 4. Remove the temporary file
-
 [[ -z "${printqueue-}" ]] && msg "Using default printqueue: ${default_printqueue}" && msg "Hint: To set a different one, use the -p option. To list all, use the -l option."
 printqueue=$default_printqueue
 
