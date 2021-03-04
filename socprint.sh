@@ -15,25 +15,46 @@ default_printqueue="psc008-dx"
 
 usage() {
   cat <<EOF
-Usage: "${BASH_SOURCE[0]}" [-h] [-v] [-f] -u username -f filename arg1 [arg2...]
+Bash script to print stuff in NUS SoC.
 
-A Bash script to print stuff in NUS SoC.
+Usage (one-liner):
+curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash /dev/stdin -u <username> -f <filename> -p <printqueue>
 
-Print command parameters:
+Voila! No drivers to mess with.
 
--u, --username          Sunfire username (without @sunfire.comp.nus.edu.sg)
--i, --identity-file     Use provided identity file with ssh
--f, --file              File to print. Accepts PDFs and text files.
+Requirements: bash and a sunfire account. You need to be connected to SoC wifi, directly or via VPN.
+You will be prompted for your password by ssh (unless you use the -i option). This script *does not* record/capture your password.
 
-List Printqueue command parameters:
+Roughly, this script will:
+1. Using ssh, copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
+2. Submit your job to the printqueue.
+3. List the printqueue. You *should* see your job here. If not, something has gone wrong.
+4. Remove the temporary file.
 
--u, --username          Sunfire username (without @sunfire.comp.nus.edu.sg)
--i, --identity-file     Use provided identity file with ssh
--l, --list-printqueue   Show available printqueues
+Parameters
 
-Other options:
+ -u, --username         (required) Sunfire username (without the @sunfire.comp.nus.edu.sg part).
+ -i, --identity-file    (optional) Identity file to pass into ssh. If set, avoids interactive password.
+ -f, --filename         (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
+ -p, --printqueue       (optional to print) Printqueue to send job to. Defaults to psc008-dx.
+ -l, --list-printqueues (required to list printqueues) List printqueues. See below.
 
--h, --help              Print this help and exit
+Print command example:
+./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+
+List printqueue command example:
+./socprint.sh -u d-lee -l
+
+Printqueues
+
+You're probably looking for one of these:
+ - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
+ - COM1 L1, in front of Tech Svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
+ - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
+
+The suffixes mean:
+ - (no suffix) or -dx: double sided
+ - -sx: single sided
 EOF
   exit
 }
