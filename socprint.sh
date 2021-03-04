@@ -119,7 +119,7 @@ tempname="SOCPrint_${tempname}"
 # 4. Remove the temporary file
 
 [[ -z "${printqueue-}" ]] && msg "Using default printqueue: ${default_printqueue}" && msg "Hint: To set a different one, use the -p option. To list all, use the -l option."
-printqueue=default_printqueue
+printqueue=$default_printqueue
 
 ssh $sshcmd "cat - > ${tempname}; lpr -P ${printqueue} ${tempname}; lpq -P ${printqueue}; rm ${tempname};" < "${filename}"
 
