@@ -33,6 +33,7 @@ Parameters:
  -f, --filename         (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
  -p, --printqueue       (optional to print) Printqueue to send job to. Defaults to psc008-dx.
  -l, --list-printqueues (required to list printqueues) List printqueues i.e. valid arguments for -p.
+ --dry-run              (for debugging/tests) echoes the commands to be executed without executing them 
 
 Print command example:
   ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
@@ -102,6 +103,9 @@ parse_params() {
       username="${2-}"
       shift
       ;;
+    --dry-run)
+      dry_run=true
+      ;;
     -?*) die "Unknown option: $1" ;;
     *) break ;;
     esac
@@ -120,10 +124,22 @@ if [[ ! -z ${identity_file} ]]; then
   sshcmd="${sshcmd} -i ${identity_file}"
 fi
 
+
+if [[ ! -z "${dry_run-}" ]];
+then
+  eval_or_echo_in_dry_run="echo"
+else
+  eval_or_echo_in_dry_run="eval"
+fi
+
 msg "Using ${username}@${host} ..."
 if [[ $list_printqueues == true ]]; then
   # Thanks @pengnam for the regex
-  ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
+  cmd=$(cat <<EOF
+ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
+EOF
+  )
+  $eval_or_echo_in_dry_run $cmd
   exit 0
 fi
 
@@ -144,6 +160,14 @@ then
   printqueue=$default_printqueue;
 fi
 
-ssh $sshcmd "cat - > ${tempname}; lpr -P ${printqueue} ${tempname}; lpq -P ${printqueue}; rm ${tempname};" < "${filename}"
+cmd=$(cat <<EOF
+ssh $sshcmd "
+  cat - > ${tempname};
+  lpr -P ${printqueue} ${tempname};
+  lpq -P ${printqueue};
+  rm ${tempname};" < ${filename}
+EOF
+  )
+$eval_or_echo_in_dry_run $cmd
 
 exit 0
