@@ -19,10 +19,10 @@ Bash script to print stuff in NUS SoC.
 
 Requirements: bash, a sunfire account, and connection to SoC wifi.
 
-Usage (copy-pastable one-liner):
+Usage (copy-and-paste this one line):
   curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash -s -- -u <username> -f <filename> -p <printqueue>
 
-Usage (to download and run from any directory):
+Usage (download and run from any directory):
   sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
   sudo chmod 755 /usr/local/bin/socprint.sh
   socprint.sh -u <username> -f <filename> -p <printqueue>
@@ -74,6 +74,15 @@ die() {
   exit "$code"
 }
 
+check_updates() {
+  # Calculate git hash-object hash without git
+  local my_sha=$((perl -e '$size = (-s shift); print "blob $size\x00"' socprint.sh && cat socprint.sh) | shasum -a 1 | cut -f 1 -d ' ')
+  # Pull latest hash from master
+  local github_sha=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint.sh | sed -n 's/.*"sha":\s"\(.*\)",/\1/p')
+  [[ my_sha != github_sha ]] && msg "Hint: There's a newer version of socprint.sh available. (${my_sha:0:10}) v (${github_sha:0:10}). Run the following command to download the new script:" \
+    && msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh\n"
+}
+
 parse_params() {
   # default values of variables set from params
   identity_file=''
@@ -113,6 +122,8 @@ parse_params() {
 
 parse_params "$@"
 
+check_updates
+
 [[ -z "${username-}" ]] && die "Missing required parameter: -u/--username"
 sshcmd="${username}@${host}"
 if [[ ! -z ${identity_file} ]]; then
@@ -121,6 +132,7 @@ if [[ ! -z ${identity_file} ]]; then
 fi
 
 msg "Using ${username}@${host} ..."
+
 if [[ $list_printqueues == true ]]; then
   # Thanks @pengnam for the regex
   ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
