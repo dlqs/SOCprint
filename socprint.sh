@@ -56,14 +56,16 @@ Printqueues:
  - (no suffix) or -dx: double sided
  - -sx: single sided
  - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
- - For the full list of printqueues, generate with the -l option, or view README.txt at the source.
+ - For the full list of printqueues, generate with the -l option, or view README at the source.
 
-Source and README.txt: https://github.com/dlqs/SOCprint
+Source and README: https://github.com/dlqs/SOCprint
 
-README.txt command (this help + list of valid printqueues):
-./socprint.sh -h > README.txt \
- && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README.txt \
- && ./socprint.sh -u d-lee -l >> README.txt
+Contributors: Donald Lee, Julius Nugroho, Sean Ng
+
+README command (prints this help + list of valid printqueues):
+./socprint.sh -h > README \
+ && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README \
+ && ./socprint.sh -u d-lee -l >> README
 
 EOF
   exit
@@ -80,12 +82,14 @@ die() {
   exit "$code"
 }
 
+script_path="/usr/local/bin/socprint.sh"
+
 check_updates() {
   # Calculate git hash-object hash without git
-  local my_sha=$((perl -e '$size = (-s shift); print "blob $size\x00"' socprint.sh && cat socprint.sh) | shasum -a 1 | cut -f 1 -d ' ')
+  local my_sha=$((perl -e '$size = (-s shift); print "blob $size\x00"' "${script_path} && cat ${script_path}") | shasum -a 1 | cut -f 1 -d ' ')
   # Pull latest hash from master
   local github_sha=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint.sh | sed -n 's/.*"sha":\s"\(.*\)",/\1/p')
-  [[ $my_sha != $github_sha ]] && msg "Hint: There's a newer version of socprint.sh available. (${my_sha:0:10}) v (${github_sha:0:10}). Run the following command to download the new script:" \
+  [[ $my_sha != $github_sha ]] && msg "Hint: You appear to have downloaded this script to /usr/local/bin/socprint.sh. There's a newer version available (${my_sha:0:10}) v (${github_sha:0:10}). Run the following command to download the new script:" \
     && msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh\n"
 }
 
@@ -128,8 +132,8 @@ parse_params() {
 
 parse_params "$@"
 
-# Only check update if downloaded locally
-[[ -f "./socprint.sh" ]] && check_updates
+# Only check update if downloaded to local bin
+[[ -f "${script_path}" ]] && check_updates
 
 [[ -z "${username-}" ]] && die "Missing required parameter: -u/--username"
 sshcmd="${username}@${host}"
@@ -141,7 +145,6 @@ fi
 msg "Using ${username}@${host} ..."
 
 if [[ $list_printqueues == true ]]; then
-  # Thanks @pengnam for the regex
   ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
   exit 0
 fi

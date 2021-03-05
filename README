@@ -39,12 +39,14 @@ Printqueues:
  - (no suffix) or -dx: double sided
  - -sx: single sided
  - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
- - For the full list of printqueues, generate with the -l option, or view README.txt at the source.
+ - For the full list of printqueues, generate with the -l option, or view README at the source.
 
-Source and README.txt: https://github.com/dlqs/SOCprint
+Source and README: https://github.com/dlqs/SOCprint
 
-README.txt command (this help + list of valid printqueues):
-./socprint.sh -h > README.txt  && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README.txt  && ./socprint.sh -u d-lee -l >> README.txt
+Contributors: Donald Lee, Julius Nugroho, Sean Ng
+
+README command (prints this help + list of valid printqueues):
+./socprint.sh -h > README  && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README  && ./socprint.sh -u d-lee -l >> README
 
 List of valid printqueues, generated with -l option on 5 March 2021
 
