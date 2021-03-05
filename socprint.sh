@@ -128,7 +128,8 @@ parse_params() {
 
 parse_params "$@"
 
-check_updates
+# Only check update if downloaded locally
+[[ -f "./socprint.sh" ]] && check_updates
 
 [[ -z "${username-}" ]] && die "Missing required parameter: -u/--username"
 sshcmd="${username}@${host}"
