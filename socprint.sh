@@ -137,8 +137,12 @@ filetype=$(file -i $filename | cut -f 2 -d ' ')
 tempname=$(perl -e '@c=("A".."Z","a".."z",0..9);$p.=$c[rand(scalar @c)] for 1..8; print "$p\n"')
 tempname="SOCPrint_${tempname}"
 
-[[ -z "${printqueue-}" ]] && msg "Using default printqueue: ${default_printqueue}" && msg "Hint: To set a different one, use the -p option. To list all, use the -l option."
-printqueue=$default_printqueue
+if [[ -z "${printqueue-}" ]];
+then
+  msg "Using default printqueue: ${default_printqueue}";
+  msg "Hint: To set a different one, use the -p option. To list all, use the -l option.";
+  printqueue=$default_printqueue;
+fi
 
 ssh $sshcmd "cat - > ${tempname}; lpr -P ${printqueue} ${tempname}; lpq -P ${printqueue}; rm ${tempname};" < "${filename}"
 
