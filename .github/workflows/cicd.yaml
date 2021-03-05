@@ -1,0 +1,24 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  cram-test:
+    name: Run cram tests
+    runs-on: ubuntu-20.04 # we don't test the other platforms
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: install cram
+        run: pip install cram
+      - name: run cram tests
+        run: cram ./tests/*.t

@@ -137,8 +137,9 @@ parse_params() {
 
 parse_params "$@"
 
-# Only check update if downloaded to local bin
-[[ -f "/usr/local/bin/socprint.sh" ]] && check_updates
+# Only check update if downloaded to local bin and we're not dry-running, as
+# this could potentially mess tests up.
+[[ -f "/usr/local/bin/socprint.sh" && -z "${dry_run-}" ]] && check_updates
 
 [[ -z "${username-}" ]] && die "Missing required parameter: -u/--username"
 sshcmd="${username}@${host}"
