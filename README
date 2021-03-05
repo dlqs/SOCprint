@@ -1,52 +1,81 @@
-Bash script to print stuff in NUS SoC.
+NAME
+  socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
 
-Requirements: bash, a sunfire account, and connection to SoC wifi.
+REQUIREMENTS
+  POSIX™-compliant sh, a sunfire account, and connection to SoC wifi.
 
-Usage (copy-and-paste this one line):
- curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash -s -- -u <username> -f <filename> -p <printqueue>
+USAGE
+  To use instantly, run the following line:
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- -u <username> -f <filepath> -p <printqueue>
 
-Usage (download and run from any directory):
- sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
- sudo chmod 755 /usr/local/bin/socprint.sh
- socprint.sh -u <username> -f <filename> -p <printqueue>
+  To download and run from any directory:
+  sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
+  sudo chmod 755 /usr/local/bin/socprint.sh
+  socprint.sh -u <username> -f <filepath> -p <printqueue>
 
-Parameters:
- -u, --username         (required) Sunfire username (without the @sunfire.comp.nus.edu.sg part).
- -i, --identity-file    (optional) Additional identity file to use with ssh. Skip if you already set up sunfire identity files for ssh.
- -f, --filename         (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
- -p, --printqueue       (optional to print) Printqueue to send job to. Defaults to psc008-dx.
- -l, --list-printqueues (required to list printqueues) List printqueues i.e. valid arguments for -p. See below.
+PARAMETERS
+  -u, --username <username>
+    (required) Sunfire username, without the @sunfire.comp.nus.edu.sg part.
 
-Print command example:
- ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+  -i, --identity-file <filepath>
+    (optional) Additional identity file to use with ssh. Skip if you already set up sunfire identity files for ssh.
 
-List printqueue command example:
- ./socprint.sh -u d-lee -l
+  -f, --filepath <filepath>
+    (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
 
-Roughly speaking, this script will:
- 1. Login to sunfire using ssh.
-    You will be prompted for your password, unless your sunfire identity files are set up.
-    This script *does not* save/record your password.
- 2. Copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
- 3. Submit your job to the printqueue.
- 4. List the printqueue. You *should* see your job here. If not, something has gone wrong.
- 5. Remove the temporary file.
+  -p, --printqueue <printqueue>
+    (required to print/show) Printqueue to send job to. Default: psc008-dx. See PRINTQUEUES.
 
-Printqueues:
- - (you're probably looking for these locations)
- - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
- - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
- - (no suffix) or -dx: double sided
- - -sx: single sided
- - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
- - For the full list of printqueues, generate with the -l option, or view README at the source.
+  -s, --show-printqueue
+    (required to show) Show list of jobs at specified printqueue.
 
-Source and README: https://github.com/dlqs/SOCprint
+  -l, --list-printqueues
+    (required to list printqueues) List printqueues, i.e. valid arguments for -p.
 
-Contributors: Donald Lee, Julius Nugroho, Sean Ng
+  --dry-run
+    (for debugging/tests) Echoes commands to be executed without executing them.
 
-README command (prints this help + list of valid printqueues):
-./socprint.sh -h > README  && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README  && ./socprint.sh -u d-lee -l >> README
+EXAMPLES
+  To print:
+  ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+
+  To list printqueues:
+  ./socprint.sh -u d-lee -l
+
+  To show printqueue at psc008:
+  ./socprint.sh -u d-lee -s -p psc008
+
+DESCRIPTION
+  This script targets conformance to POSIX.1-2017 standards (https://pubs.opengroup.org/onlinepubs/9699919799/).
+  This improves portability, enterprise-gradeability, and makes printing in SoC a zero-dependency,
+  no-ass-sucking experience. Roughly speaking, this script will:
+  1. Login to sunfire using ssh.
+     You will be prompted for your password, unless your identity files are set up.
+     This script *does not* save/record your password.
+  2. Copy the file into your home directory in sunfire, to a temporary file.
+  3. Submit your job to the printqueue.
+  4. List the printqueue. You job *should* appear. If not, something has gone wrong.
+  5. Remove the temporary file.
+
+PRINTQUEUES
+  Popular places:
+  - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
+  - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstb pstb-dx pstb-sx
+  - (no suffix)/-dx: double sided, -sx: single sided, -nb: no banner
+  - Most other printers have user restrictions.
+    See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues.
+  - For the full list of printqueues, generate with the -l option, or view the SOURCE.
+
+SOURCE
+  https://github.com/dlqs/SOCprint
+  File bugs or compliance issues above. We take POSIX™ conformance seriously.
+  POSIX™ is a Trademark of The IEEE.
+
+CONTRIBUTORS
+  Donald Lee, Julius Nugroho, Sean Ng
+
+GENERATE README
+  ./socprint.sh -h > README   && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README   && ./socprint.sh -u d-lee -l >> README
 
 List of valid printqueues, generated with -l option on 5 March 2021
 
