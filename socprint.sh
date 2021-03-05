@@ -87,9 +87,11 @@ check_updates() {
   local my_sha=$((perl -e '$size = (-s shift); print "blob $size\x00"' /usr/local/bin/socprint.sh && cat /usr/local/bin/socprint.sh) | shasum -a 1 | cut -f 1 -d ' ')
   # Pull latest hash from master
   local github_sha=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint.sh | sed -n 's/.*"sha":\s"\(.*\)",/\1/p')
-  [[ $my_sha != $github_sha ]] && msg "Hint: You appear to have downloaded this script to /usr/local/bin/socprint.sh. There's a newer version available (${my_sha:0:10}) v (${github_sha:0:10})." \
-    && msg "Run the following command to download the new script:" \
-    && msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh\n"
+  if [[ $my_sha != $github_sha ]]; then
+    msg "Hint: You appear to have downloaded this script to /usr/local/bin/socprint.sh. There's a newer version available (${my_sha:0:10}) v (${github_sha:0:10})."
+    msg "Run the following command to download the new script:"
+    msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh\n"
+  fi
 }
 
 parse_params() {
