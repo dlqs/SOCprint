@@ -19,46 +19,54 @@ Bash script to print stuff in NUS SoC.
 
 Requirements: bash, a sunfire account, and connection to SoC wifi.
 
-Usage (copy-pastable one-liner):
-  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash -s -- -u <username> -f <filename> -p <printqueue>
+Usage (copy-and-paste this one line):
+ curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | bash -s -- -u <username> -f <filename> -p <printqueue>
 
-Usage (to download and run from any directory):
-  sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
-  sudo chmod 755 /usr/local/bin/socprint.sh
-  socprint.sh -u <username> -f <filename> -p <printqueue>
-  
+Usage (download and run from any directory):
+ sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
+ sudo chmod 755 /usr/local/bin/socprint.sh
+ socprint.sh -u <username> -f <filename> -p <printqueue>
+
 Parameters:
  -u, --username         (required) Sunfire username (without the @sunfire.comp.nus.edu.sg part).
- -i, --identity-file    (optional) Identity file to pass into ssh. If set, avoids interactive password.
+ -i, --identity-file    (optional) Additional identity file to use with ssh. Skip if you already set up sunfire identity files for ssh.
  -f, --filename         (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
  -p, --printqueue       (optional to print) Printqueue to send job to. Defaults to psc008-dx.
  -l, --list-printqueues (required to list printqueues) List printqueues i.e. valid arguments for -p.
  --dry-run              (for debugging/tests) echoes the commands to be executed without executing them 
 
 Print command example:
-  ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+ ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
 
 List printqueue command example:
-  ./socprint.sh -u d-lee -l
+ ./socprint.sh -u d-lee -l
 
 Roughly speaking, this script will:
-  1. Login to sunfire using ssh. You will be prompted for your password (unless you use the -i option). This script does not save/record your password.
-  2. Copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
-  3. Submit your job to the printqueue.
-  4. List the printqueue. You *should* see your job here. If not, something has gone wrong.
-  5. Remove the temporary file.
+ 1. Login to sunfire using ssh.
+    You will be prompted for your password, unless your sunfire identity files are set up.
+    This script *does not* save/record your password.
+ 2. Copy your file into your home directory in sunfire.comp.nus.edu.sg to a temporary, random name.
+ 3. Submit your job to the printqueue.
+ 4. List the printqueue. You *should* see your job here. If not, something has gone wrong.
+ 5. Remove the temporary file.
 
 Printqueues:
-  - (you're probably looking for these locations)
-  - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
-  - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
-  - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
+ - (you're probably looking for these locations)
+ - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
+ - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstsb pstsb-dx pstsb-sx
+ - (no suffix) or -dx: double sided
+ - -sx: single sided
+ - Most other printers have user restrictions. See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues
+ - For the full list of printqueues, generate with the -l option, or view README at the source.
 
-The suffixes mean:
-  - (no suffix) or -dx: double sided
-  - -sx: single sided
+Source and README: https://github.com/dlqs/SOCprint
 
-Source: https://github.com/dlqs/SOCprint
+Contributors: Donald Lee, Julius Nugroho, Sean Ng
+
+README command (prints this help + list of valid printqueues):
+./socprint.sh -h > README \
+ && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README \
+ && ./socprint.sh -u d-lee -l >> README
 
 EOF
   exit
@@ -73,6 +81,18 @@ die() {
   local code=${2-1} # default exit status 1
   msg "$msg"
   exit "$code"
+}
+
+check_updates() {
+  # Calculate git hash-object hash without git
+  local my_sha=$((perl -e '$size = (-s shift); print "blob $size\x00"' /usr/local/bin/socprint.sh && cat /usr/local/bin/socprint.sh) | shasum -a 1 | cut -f 1 -d ' ')
+  # Pull latest hash from master
+  local github_sha=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint.sh | sed -n 's/.*"sha":\s"\(.*\)",/\1/p')
+  if [[ $my_sha != $github_sha ]]; then
+    msg "Hint: You appear to have downloaded this script to /usr/local/bin/socprint.sh. There's a newer version available (${my_sha:0:10}) v (${github_sha:0:10})."
+    msg "Run the following command to download the new script:"
+    msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh\n"
+  fi
 }
 
 parse_params() {
@@ -117,6 +137,9 @@ parse_params() {
 
 parse_params "$@"
 
+# Only check update if downloaded to local bin
+[[ -f "/usr/local/bin/socprint.sh" ]] && check_updates
+
 [[ -z "${username-}" ]] && die "Missing required parameter: -u/--username"
 sshcmd="${username}@${host}"
 if [[ ! -z ${identity_file} ]]; then
@@ -133,6 +156,7 @@ else
 fi
 
 msg "Using ${username}@${host} ..."
+
 if [[ $list_printqueues == true ]]; then
   # Thanks @pengnam for the regex
   cmd=$(cat <<EOF
