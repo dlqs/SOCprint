@@ -175,7 +175,7 @@ sshcmd="${username}@${host}"
 [ -n "${identity_file}" ] && sshcmd="${sshcmd} -i ${identity_file}"
 
 if [ -n "${dry_run-}" ]; then
-  eval_or_echo_in_dry_run='echo'
+  eval_or_echo_in_dry_run='printf %b\n'
 else
   eval_or_echo_in_dry_run='eval'
 fi

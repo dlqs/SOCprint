@@ -4,7 +4,7 @@ Perform setup
 Check that list printer command is correct
   $ $TMPDIR/socprint.sh -u test_user -l --dry-run
   Using test_user@sunfire.comp.nus.edu.sg ...
-  ssh test_user@sunfire.comp.nus.edu.sg "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
+  ssh test_user@sunfire.comp.nus.edu.sg "cat /etc/printcap | grep '^p' | sed 's/^\\([^:]*\\).*$/\x01/'" (esc)
 
 Check that bad files print warnings and errors
   $ touch $TMPDIR/incorrect_format
