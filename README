@@ -1,54 +1,79 @@
 NAME
   socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
 
-REQUIREMENTS
-  POSIX™-compliant sh, a sunfire account, and connection to SoC wifi.
+SYPNOSIS
+  socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
+  socprint.sh (j|jobs ) [options] <username> <printqueue>
+  socprint.sh (l|list ) [options] <username>
+  socprint.sh (h|help ) 
 
-USAGE
-  To use instantly, run the following line:
-  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- -u <username> -f <filepath> -p <printqueue>
+QUICKSTART
+  To print a file instantly, use the following line:
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- print <username> <printqueue> <filepath>
 
-  To download and run from any directory:
-  sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
-  sudo chmod 755 /usr/local/bin/socprint.sh
-  socprint.sh -u <username> -f <filepath> -p <printqueue>
+DESCRIPTION
+  This script requires a POSIX™-compliant sh, a sunfire account, and connection to 
+  SoC wifi. 
 
-PARAMETERS
-  -u, --username <username>
-    (required) Sunfire username, without the @sunfire.comp.nus.edu.sg part.
+  Besides the above, this script has zero-dependencies, is portable, and handles 
+  text/byte streams. This makes printing in SoC a painless, non-ass-sucking experience 
+  that doesn't require installing any drivers.
+
+COMMANDS (shortname|longname)
+  (p|print) Print a file at specified printqueue.
+  (j|jobs ) List jobs at specified printqueue.
+  (l|list ) List all printqueues.
+  (h|help ) Show this message.
+  
+OPTIONS
+  <username> 
+    Sunfire username, without the @sunfire.comp.nus.edu.sg part.
+
+  <printqueue>
+    Printer + suffix. See PRINTQUEUES for commonly-used printers.
+
+  [-|<filepath>] 
+    Print file. Recommended PDF/text. Undefined behaviour for other file types. 
+    If unspecified or -, read from standard input.
 
   -i, --identity-file <filepath>
-    (optional) Additional identity file to use with ssh. Skip if you already set up sunfire identity files for ssh.
-
-  -f, --filepath <filepath>
-    (required to print) File to print. Tested with PDF/plain text files. Undefined behaviour for anything else.
-
-  -p, --printqueue <printqueue>
-    (required to print/show) Printqueue to send job to. Default: psc008-dx. See PRINTQUEUES.
-
-  -s, --show-printqueue
-    (required to show) Show list of jobs at specified printqueue.
-
-  -l, --list-printqueues
-    (required to list printqueues) List printqueues, i.e. valid arguments for -p.
+    (optional) Additional identity file to use with ssh. Skip if you already set 
+    up sunfire identity files for ssh.
 
   --dry-run
     (for debugging/tests) Echoes commands to be executed without executing them.
 
 EXAMPLES
-  To print:
-  ./socprint.sh -u d-lee -f ~/Downloads/cs3210_tutorial8.pdf -p psc008-dx
+  To print from filepath:
+    ./socprint.sh print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
+
+  To print from stdin using the pipe operator:
+    cat ~/d/cs3210_tutorial8.pdf | ./socprint.sh print d-lee psc008-dx
+
+  To print with shortname, using the redirection operator:
+    ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf 
+
+  To check jobs:
+    ./socprint.sh jobs d-lee psc008-dx
 
   To list printqueues:
-  ./socprint.sh -u d-lee -l
+    ./socprint.sh list d-lee
 
-  To show printqueue at psc008:
-  ./socprint.sh -u d-lee -s -p psc008
+  To download and run from any directory:
+    sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o /usr/local/bin/socprint.sh
+    sudo chmod 755 /usr/local/bin/socprint.sh
 
-DESCRIPTION
-  This script targets conformance to POSIX.1-2017 standards (https://pubs.opengroup.org/onlinepubs/9699919799/).
-  This improves portability, enterprise-gradeability, and makes printing in SoC a zero-dependency,
-  no-ass-sucking experience. Roughly speaking, this script will:
+PRINTQUEUES
+  Popular places:
+  - COM1 basement:                   psc008-dx psc008-sx psc011-dx psc011-sx
+  - COM1 L1, in front of tech svsc:  psts-dx psts-sx pstb-dx pstb-sx pstc-dx pstc-sx
+  - -dx: double sided, -sx: single sided, -nb: no banner
+  - Most other printers have user restrictions.
+    See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues.
+  - For the full list of printqueues, generate with the -l option, or view the SOURCE.
+
+IMPLEMENTATION
+  Roughly speaking, the print command will:
   1. Login to sunfire using ssh.
      You will be prompted for your password, unless your identity files are set up.
      This script *does not* save/record your password.
@@ -57,27 +82,21 @@ DESCRIPTION
   4. List the printqueue. You job *should* appear. If not, something has gone wrong.
   5. Remove the temporary file.
 
-PRINTQUEUES
-  Popular places:
-  - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
-  - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstb pstb-dx pstb-sx
-  - (no suffix)/-dx: double sided, -sx: single sided, -nb: no banner
-  - Most other printers have user restrictions.
-    See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues.
-  - For the full list of printqueues, generate with the -l option, or view the SOURCE.
+STANDARDS
+  This script targets conformance to POSIX.1-2017 standards (https://pubs.opengroup.org/onlinepubs/9699919799/). Yes, you read that right and no, we're not kidding. POSIX™ compliance is 
+  serious enterprise business!!!1 POSIX™ is a Trademark of The IEEE.
 
 SOURCE
   https://github.com/dlqs/SOCprint
-  File bugs or compliance issues above. We take POSIX™ conformance seriously.
-  POSIX™ is a Trademark of The IEEE.
+  File bugs or POSIX™ compliance issues above. 
 
 CONTRIBUTORS
   Donald Lee, Julius Nugroho, Sean Ng
 
 GENERATE README
-  ./socprint.sh -h > README   && echo "List of valid printqueues, generated with -l option on 5 March 2021\n" >> README   && ./socprint.sh -u d-lee -l >> README
+  ./socprint.sh help > README   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README   && ./socprint.sh list d-lee >> README
 
-List of valid printqueues, generated with -l option on 5 March 2021
+List of valid printqueues, generated with list command on 5 March 2021
 
 psts
 psts-sx

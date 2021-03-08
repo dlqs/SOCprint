@@ -74,9 +74,9 @@ EXAMPLES
 
 PRINTQUEUES
   Popular places:
-  - COM1 basement:                   psc008 psc008-dx psc008-sx psc011 psc011-dx psc011-sx
-  - COM1 L1, in front of tech svsc:  psts psts-dx psts-sx pstb pstb-dx pstb-sx
-  - (no suffix)/-dx: double sided, -sx: single sided, -nb: no banner
+  - COM1 basement:                   psc008-dx psc008-sx psc011-dx psc011-sx
+  - COM1 L1, in front of tech svsc:  psts-dx psts-sx pstb-dx pstb-sx pstc-dx pstc-sx
+  - -dx: double sided, -sx: single sided, -nb: no banner
   - Most other printers have user restrictions.
     See https://dochub.comp.nus.edu.sg/cf/guides/printing/print-queues.
   - For the full list of printqueues, generate with the -l option, or view the SOURCE.
@@ -131,7 +131,7 @@ check_updates() {
   if [ "$my_sha" != "$github_sha" ]; then
     msg "Hint: You appear to have downloaded this script to $default_script. There's a newer version available ($( printf '%s' "$my_sha" | head -c 10) v $( printf '%s' "$github_sha" | head -c 10 ))."
     msg "Run the following command to download the new script:"
-    msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o $default_script \n"
+    msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o $default_script"
   fi
 }
 
@@ -237,7 +237,7 @@ EOF
 esac
 
 [ -z "${cmd-}" ] && die "Error: unknown command: ${command-}"
-msg "Using ${username-}@${host}"
+msg "Using ${username-}@${host} ..."
 $eval_or_echo_in_dry_run "$cmd"
 
 # Only check update if downloaded to local bin and we're not dry-running, as
