@@ -135,33 +135,26 @@ check_updates() {
   fi
 }
 
-parse_params() {
-  # default values of variables
-  identity_file=''
-
-  while :; do
-    case "${1-}" in
-    -i | --identity-file)
-      identity_file="${2-}"
-      shift
-      ;;
-    --dry-run)
-      dry_run=true
-      shift
-      ;;
-    -?*) die "Unknown option: $1" ;;
-    *) break ;;
-    esac
-    #shift
-  done
-
-  args=("$@")
-  return 0
-}
-
 command="${1-}"
 shift
-parse_params "$@"
+
+identity_file=''
+
+while :; do
+  case "${1-}" in
+  -i | --identity-file)
+    identity_file="${2-}"
+    shift
+    ;;
+  --dry-run)
+    dry_run=true
+    shift
+    ;;
+  -?*) die "Unknown option: $1" ;;
+  *) break ;;
+  esac
+  #shift
+done
 
 if [ -n "${dry_run-}" ]; then
   eval_or_echo_in_dry_run='printf %b\n'
@@ -171,11 +164,12 @@ fi
 
 if [ "${command}" = 'h' ] || [ "${command}" = 'help' ]; then
   usage
+  exit 0
 fi
 
 check_username() {
-  [ -z "${args[0]-}" ] && die "Missing required argument: <username>"
-  username="${args[0]-}"
+  [ -z "${1-}" ] && die "Missing required argument: <username>"
+  username="${1-}"
   sshcmd="${username-}@${host}"
   # Use the ssh identity_file if provided
   [ -n "${identity_file}" ] && sshcmd="${sshcmd} -i ${identity_file}"
@@ -183,18 +177,18 @@ check_username() {
 }
 
 check_printqueue() {
-  [ -z "${args[1]-}" ] && die "Missing required argument: <printqueue>"
-  printqueue="${args[1]-}"
+  [ -z "${2-}" ] && die "Missing required argument: <printqueue>"
+  printqueue="${2-}"
   [ "$(printf "%s" $printqueue | head -c1)" != 'p' ] && die "Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help."
   return 0
 }
 
 case "${command-}" in
 p | print)
-  check_username
-  check_printqueue
+  check_username $@
+  check_printqueue $@
 
-  filepath="${args[2]-}"
+  filepath="${3-}"
   if [ -z "${filepath-}" ] || [ "${filepath-}" = '-' ]; then
     filepath='/dev/stdin'
   else
@@ -218,8 +212,8 @@ EOF
   )
   ;;
 j | jobs)
-  check_username
-  check_printqueue
+  check_username $@
+  check_printqueue $@
 
   cmd=$( cat <<EOF
   ssh $sshcmd "lpq -P ${printqueue};"
@@ -227,7 +221,7 @@ EOF
   )
   ;;
 l | list)
-  check_username
+  check_username $@
 
   cmd=$( cat <<EOF
   ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
