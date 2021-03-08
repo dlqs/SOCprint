@@ -179,14 +179,14 @@ check_username() {
 check_printqueue() {
   [ -z "${2-}" ] && die "Missing required argument: <printqueue>"
   printqueue="${2-}"
-  [ "$(printf "%s" $printqueue | head -c1)" != 'p' ] && die "Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help."
+  [ "$(printf "%s" "$printqueue" | head -c1)" != 'p' ] && die "Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help."
   return 0
 }
 
 case "${command-}" in
 p | print)
-  check_username $@
-  check_printqueue $@
+  check_username "$@"
+  check_printqueue "$@"
 
   filepath="${3-}"
   if [ -z "${filepath-}" ] || [ "${filepath-}" = '-' ]; then
@@ -212,8 +212,8 @@ EOF
   )
   ;;
 j | jobs)
-  check_username $@
-  check_printqueue $@
+  check_username "$@"
+  check_printqueue "$@"
 
   cmd=$( cat <<EOF
   ssh $sshcmd "lpq -P ${printqueue};"
@@ -221,7 +221,7 @@ EOF
   )
   ;;
 l | list)
-  check_username $@
+  check_username "$@"
 
   cmd=$( cat <<EOF
   ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
