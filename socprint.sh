@@ -6,7 +6,7 @@ host='sunfire.comp.nus.edu.sg'
 default_script='/usr/local/bin/socprint.sh'
 
 usage() {
-  cat <<EOF
+    cat <<EOF
 NAME
   socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
 
@@ -108,30 +108,30 @@ GENERATE README
   && ./socprint.sh list d-lee >> README
 
 EOF
-  exit 0
+exit 0
 }
 
 msg() {
-  # Log messages to stderr instead of stdout
-  printf "%b\n" "${1-}" >&2
+    # Log messages to stderr instead of stdout
+    printf "%b\n" "${1-}" >&2
 }
 
 die() {
-  msg "$1"
-  exit 1
+    msg "$1"
+    exit 1
 }
 
 check_updates() {
-  # Calculate git hash-object hash without git, since it is not POSIX compliant
-  size=$( wc -c ${default_script} | cut -f 1 -d ' ' )
-  my_sha=$( (printf "blob %s\0" "$size" && cat ${default_script}) | shasum -a 1 | cut -f 1 -d ' ')
+    # Calculate git hash-object hash without git, since it is not POSIX compliant
+    size=$( wc -c ${default_script} | cut -f 1 -d ' ' )
+    my_sha=$( (printf "blob %s\0" "$size" && cat ${default_script}) | shasum -a 1 | cut -f 1 -d ' ')
 
   # Pull latest hash from master
   github_sha=$( curl -m 1 -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint.sh | sed -n 's/.*"sha":\s"\(.*\)",/\1/p' )
   if [ "$my_sha" != "$github_sha" ]; then
-    msg "Hint: You appear to have downloaded this script to $default_script. There's a newer version available ($( printf '%s' "$my_sha" | head -c 10) v $( printf '%s' "$github_sha" | head -c 10 ))."
-    msg "Run the following command to download the new script:"
-    msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o $default_script"
+      msg "Hint: You appear to have downloaded this script to $default_script. There's a newer version available ($( printf '%s' "$my_sha" | head -c 10) v $( printf '%s' "$github_sha" | head -c 10 ))."
+      msg "Run the following command to download the new script:"
+      msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o $default_script"
   fi
 }
 
@@ -142,77 +142,77 @@ identity_file=''
 options=''
 
 while :; do
-  case "${1-}" in
-  -i | --identity-file)
-    identity_file="${2-}"
-    shift
-    ;;
-  -2)
-    two_pages_to_one=true
-    shift
-    ;;
-  --dry-run)
-    dry_run=true
-    shift
-    ;;
-  -?*) die "Unknown option: $1" ;;
-  *) break ;;
-  esac
-  #shift
+    case "${1-}" in
+        -i | --identity-file)
+            identity_file="${2-}"
+            shift
+            ;;
+        -2)
+            two_pages_to_one=true
+            shift
+            ;;
+        --dry-run)
+            dry_run=true
+            shift
+            ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+    esac
+    #shift
 done
 
 if [ -n "${dry_run-}" ]; then
-  eval_or_echo_in_dry_run='printf %b\n'
+    eval_or_echo_in_dry_run='printf %b\n'
 else
-  eval_or_echo_in_dry_run='eval'
+    eval_or_echo_in_dry_run='eval'
 fi
 
 if [ "${command}" = 'h' ] || [ "${command}" = 'help' ]; then
-  usage
-  exit 0
+    usage
+    exit 0
 fi
 
 check_username() {
-  [ -z "${1-}" ] && die "Missing required argument: <username>"
-  username="${1-}"
-  sshcmd="${username-}@${host}"
-  # Use the ssh identity_file if provided
-  [ -n "${identity_file}" ] && sshcmd="${sshcmd} -i ${identity_file}"
-  return 0
+    [ -z "${1-}" ] && die "Missing required argument: <username>"
+    username="${1-}"
+    sshcmd="${username-}@${host}"
+    # Use the ssh identity_file if provided
+    [ -n "${identity_file}" ] && sshcmd="${sshcmd} -i ${identity_file}"
+    return 0
 }
 
 check_printqueue() {
-  [ -z "${2-}" ] && die "Missing required argument: <printqueue>"
-  printqueue="${2-}"
-  [ "$(printf "%s" "$printqueue" | head -c1)" != 'p' ] && die "Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help."
-  return 0
+    [ -z "${2-}" ] && die "Missing required argument: <printqueue>"
+    printqueue="${2-}"
+    [ "$(printf "%s" "$printqueue" | head -c1)" != 'p' ] && die "Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help."
+    return 0
 }
 
 case "${command-}" in
-p | print)
-  check_username "$@"
-  check_printqueue "$@"
+    p | print)
+        check_username "$@"
+        check_printqueue "$@"
 
-  filepath="${3-}"
-  if [ -z "${filepath-}" ] || [ "${filepath-}" = '-' ]; then
-    filepath='/dev/stdin'
-  else
-    [ ! -f "${filepath-}" ] && die "Error: No such file"
-    # Warn if filetype is unexpected
-    filetype=$( file -i "${filepath}" | cut -f 2 -d ' ')
-    [ "${filetype}" != 'application/pdf;' ] && [ "$( printf '%s' "$filetype" | head -c 4 )" != 'text' ] && msg "Warning: File is not PDF or text. Print behaviour is undefined."
-  fi
+        filepath="${3-}"
+        if [ -z "${filepath-}" ] || [ "${filepath-}" = '-' ]; then
+            filepath='/dev/stdin'
+        else
+            [ ! -f "${filepath-}" ] && die "Error: No such file"
+            # Warn if filetype is unexpected
+            filetype=$( file -i "${filepath}" | cut -f 2 -d ' ')
+            [ "${filetype}" != 'application/pdf;' ] && [ "$( printf '%s' "$filetype" | head -c 4 )" != 'text' ] && msg "Warning: File is not PDF or text. Print behaviour is undefined."
+        fi
 
   # Generate random 8 character alphanumeric string in a POSIX compliant way
   tempname=$( awk 'BEGIN{srand();for(i=0;i<8;i++){r=int(61*rand());printf("%c",r<10?48+r:r<35?55+r:62+r)}}' )
   tempname="SOCPrint_${tempname}"
 
   if [ -n "${two_pages_to_one-}" ]; then
-    tempname2="${tempname}2"
-    tempname3="${tempname}3"
-    options="pdf2ps ${tempname} ${tempname2}; multips ${tempname2} > ${tempname3}; mv -f ${tempname3} ${tempname}; rm ${tempname2};"
+      tempname2="${tempname}2"
+      tempname3="${tempname}3"
+      options="pdf2ps ${tempname} ${tempname2}; multips ${tempname2} > ${tempname3}; mv -f ${tempname3} ${tempname}; rm ${tempname2};"
   else
-    options=""
+      options=""
   fi
 
   cmd=$( cat <<EOF
@@ -223,25 +223,25 @@ p | print)
     lpq -P ${printqueue};
     rm ${tempname};" < "${filepath}"
 EOF
-  )
-  ;;
+)
+;;
 j | jobs)
-  check_username "$@"
-  check_printqueue "$@"
+    check_username "$@"
+    check_printqueue "$@"
 
-  cmd=$( cat <<EOF
+    cmd=$( cat <<EOF
   ssh $sshcmd "lpq -P ${printqueue};"
 EOF
-  )
-  ;;
+)
+;;
 l | list)
-  check_username "$@"
+    check_username "$@"
 
-  cmd=$( cat <<EOF
+    cmd=$( cat <<EOF
   ssh $sshcmd "cat /etc/printcap | grep '^p' | sed 's/^\([^:]*\).*$/\1/'"
 EOF
-  )
-  ;;
+)
+;;
 esac
 
 [ -z "${cmd-}" ] && die "Error: unknown command: ${command-}"
