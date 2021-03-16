@@ -48,6 +48,10 @@ OPTIONS
     (optional) Additional identity file to use with ssh. Skip if you already set
     up sunfire identity files for ssh.
 
+  -2
+    (optional) Prints every two logical pages onto one physical page.
+    Can only be used for pdf files that have portrait orientation.
+
   --dry-run
     (for debugging/tests) Echoes commands to be executed without executing them.
 
