@@ -14,17 +14,17 @@ SYPNOSIS
   socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
   socprint.sh (j|jobs ) [options] <username> <printqueue>
   socprint.sh (l|list ) [options] <username>
-  socprint.sh (h|help ) 
+  socprint.sh (h|help )
 
 QUICKSTART
   To print a file instantly, use the following line:
   curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- print <username> <printqueue> <filepath>
 
 DESCRIPTION
-  This script requires a POSIX™-compliant sh, a sunfire account, and connection to 
-  SoC wifi. 
+  This script requires a POSIX™-compliant sh, a sunfire account, and connection to
+  SoC wifi.
 
-  Besides the above, this script has zero-dependencies, is portable, and handles text/byte streams. This makes printing 
+  Besides the above, this script has zero-dependencies, is portable, and handles text/byte streams. This makes printing
   in SoC a painless, non-ass-sucking experience that doesn't require installing any drivers.
 
 COMMANDS (shortname|longname)
@@ -32,20 +32,20 @@ COMMANDS (shortname|longname)
   (j|jobs ) List jobs at specified printqueue.
   (l|list ) List all printqueues.
   (h|help ) Show this message.
-  
+
 OPTIONS
-  <username> 
+  <username>
     Sunfire username, without the @sunfire.comp.nus.edu.sg part.
 
   <printqueue>
     Printer + suffix. See PRINTQUEUES for commonly-used printers.
 
-  [-|<filepath>] 
-    Print file. Recommended PDF/text. Undefined behaviour for other file types. 
+  [-|<filepath>]
+    Print file. Recommended PDF/text. Undefined behaviour for other file types.
     If unspecified or -, read from standard input.
 
   -i, --identity-file <filepath>
-    (optional) Additional identity file to use with ssh. Skip if you already set 
+    (optional) Additional identity file to use with ssh. Skip if you already set
     up sunfire identity files for ssh.
 
   --dry-run
@@ -59,7 +59,7 @@ EXAMPLES
     cat ~/d/cs3210_tutorial8.pdf | ./socprint.sh print d-lee psc008-dx
 
   To print with shortname, using the redirection operator:
-    ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf 
+    ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
 
   To check jobs:
     ./socprint.sh jobs d-lee psc008-dx
@@ -92,7 +92,7 @@ IMPLEMENTATION
 
 STANDARDS
   This script targets conformance to POSIX.1-2017 standards (https://pubs.opengroup.org/onlinepubs/9699919799/).
-  Yes, you read that right and no, we're not kidding. POSIX™ compliance is serious enterprise business!!!1 
+  Yes, you read that right and no, we're not kidding. POSIX™ compliance is serious enterprise business!!!1
   POSIX™ is a Trademark of The IEEE.
 
 SOURCE
@@ -139,11 +139,16 @@ command="${1-}"
 shift
 
 identity_file=''
+options=''
 
 while :; do
   case "${1-}" in
   -i | --identity-file)
     identity_file="${2-}"
+    shift
+    ;;
+  -2)
+    two_pages_to_one=true
     shift
     ;;
   --dry-run)
@@ -202,9 +207,18 @@ p | print)
   tempname=$( awk 'BEGIN{srand();for(i=0;i<8;i++){r=int(61*rand());printf("%c",r<10?48+r:r<35?55+r:62+r)}}' )
   tempname="SOCPrint_${tempname}"
 
+  if [ -n "${two_pages_to_one-}" ]; then
+    tempname2="${tempname}2"
+    tempname3="${tempname}3"
+    options="pdf2ps ${tempname} ${tempname2}; multips ${tempname2} > ${tempname3}; mv -f ${tempname3} ${tempname}; rm ${tempname2};"
+  else
+    options=""
+  fi
+
   cmd=$( cat <<EOF
   ssh $sshcmd "
     cat - > ${tempname};
+    $options
     lpr -P ${printqueue} ${tempname};
     lpq -P ${printqueue};
     rm ${tempname};" < "${filepath}"
