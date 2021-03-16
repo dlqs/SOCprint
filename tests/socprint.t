@@ -13,6 +13,7 @@ Check that bad files print warnings and errors
   Using test_user@sunfire.comp.nus.edu.sg ...
     ssh test_user@sunfire.comp.nus.edu.sg "
       cat - > SOCPrint_*; (glob)
+      
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
       rm SOCPrint_*;" < "*/incorrect_format" (glob)
@@ -23,6 +24,7 @@ Check that bad files print warnings and errors
   Using test_user@sunfire.comp.nus.edu.sg ...
     ssh test_user@sunfire.comp.nus.edu.sg "
       cat - > SOCPrint_*; (glob)
+      
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
       rm SOCPrint_*;" < "*/acceptable_format.txt" (glob)
@@ -35,6 +37,7 @@ Check that bad files print warnings and errors
   Using test_user@sunfire.comp.nus.edu.sg ...
     ssh test_user@sunfire.comp.nus.edu.sg "
       cat - > SOCPrint_*; (glob)
+      
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
       rm SOCPrint_*;" < "/dev/stdin" (glob)
@@ -45,6 +48,7 @@ Check printer selection works
   Using test_user@sunfire.comp.nus.edu.sg ...
     ssh test_user@sunfire.comp.nus.edu.sg "
       cat - > SOCPrint_*; (glob)
+      
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
       rm SOCPrint_*;" < "*/acceptable_format.txt" (glob)
