@@ -56,3 +56,9 @@ Check printer selection works
   $ $TMPDIR/socprint.sh print --dry-run test_user $TMPDIR/acceptable_format.txt
   Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help.
   [1]
+
+Check quota works
+  $ $TMPDIR/socprint.sh quota --dry-run test_user
+  Using test_user@sunfire.comp.nus.edu.sg ...
+    ssh test_user@sunfire.comp.nus.edu.sg -t "/usr/local/bin/pusage"
+
