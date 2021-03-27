@@ -249,8 +249,9 @@ EOF
 q | quota)
     check_username "$@"
 
+    # -t is needed because pusage works with interactive ssh and not without. 
+    # Using -t emulates an interaction session. 'man ssh' for details
     cmd=$( cat <<EOF
-    # -t is needed because pusage works with interactive ssh and not without. Using -t emulates an interaction session. 'man ssh' for details
   ssh $sshcmd -t "/usr/local/bin/pusage"
 EOF
 )
