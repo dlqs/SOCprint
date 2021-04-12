@@ -106,6 +106,10 @@ SOURCE
 CONTRIBUTORS
   Donald Lee, Julius Nugroho, Sean Ng
 
+KEYWORDS
+  how to print NUS SoC National University of Singapore School of Computing
+  printers shell command line basement sunfire mac windows linux bsd ben
+
 GENERATE README
   ./socprint.sh help > README \
   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README \
