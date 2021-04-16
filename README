@@ -5,7 +5,6 @@ SYPNOSIS
   socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
   socprint.sh (j|jobs ) [options] <username> <printqueue>
   socprint.sh (l|list ) [options] <username>
-  socprint.sh (q|quota) [options] <username>
   socprint.sh (h|help )
 
 QUICKSTART
@@ -23,7 +22,6 @@ COMMANDS (shortname|longname)
   (p|print) Print a file at specified printqueue.
   (j|jobs ) List jobs at specified printqueue.
   (l|list ) List all printqueues.
-  (q|quota) Show print quota.
   (h|help ) Show this message.
 
 OPTIONS
@@ -98,10 +96,14 @@ SOURCE
 CONTRIBUTORS
   Donald Lee, Julius Nugroho, Sean Ng
 
+KEYWORDS
+  how to print NUS SoC National University of Singapore School of Computing
+  printers shell command line basement sunfire mac windows linux bsd ben
+
 GENERATE README
   ./socprint.sh help > README   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README   && ./socprint.sh list d-lee >> README
 
-List of valid printqueues, generated with list command on 26 March 2021
+List of valid printqueues, generated with list command on 17 April 2021
 
 psts
 psts-sx

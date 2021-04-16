@@ -72,7 +72,7 @@ EXAMPLES
     ./socprint.sh list d-lee
 
   To download and run from any directory:
-    sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/dlqs/SOCprint/master/install.sh)"
+    sudo sh -c "\$(curl -fsSL https://raw.githubusercontent.com/dlqs/SOCprint/master/install.sh)"
 
 PRINTQUEUES
   Popular places:
