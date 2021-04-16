@@ -8,13 +8,13 @@ COMMAND="socprint"
 COMMANDPATH="/usr/local/bin"
 
 check_command_not_installed() {
-    command -v $COMMAND &>/dev/null && {
+    command -v $COMMAND >/dev/null 2>&1 && {
         error_message "SOCPrint has already been installed"
     }
 }
 
 check_curl_not_install() {
-    command -v curl &>/dev/null || {
+    command -v curl >/dev/null 2>&1 || {
         error_message "Please install curl"
     }
 }
@@ -50,13 +50,13 @@ install() {
 }
 
 check_root() {
-    if [[ $EUID -ne 0 ]]; then
+    if ! [ "$(id -u)" = 0 ]; then
         error_message "This script must be run as root"
     fi
 }
 
 welcome_message() {
-    printf "$GREEN"
+    printf "%s" "$GREEN"
     cat <<EOF
   /\$\$\$\$\$\$   /\$\$\$\$\$\$   /\$\$\$\$\$\$  /\$\$\$\$\$\$\$           /\$\$             /\$\$
  /\$\$__  \$\$ /\$\$__  \$\$ /\$\$__  \$\$| \$\$__  \$\$         |__/            | \$\$
@@ -67,7 +67,7 @@ welcome_message() {
 |  \$\$\$\$\$\$/|  \$\$\$\$\$\$/|  \$\$\$\$\$\$/| \$\$     | \$\$      | \$\$| \$\$  | \$\$  |  \$\$\$\$/
  \______/  \______/  \______/ |__/     |__/      |__/|__/  |__/   \___/
 EOF
-    printf "$RESET"
+    printf "%s" "$RESET"
     printf "%s...to the moon%s\n" "$BLUE" "$RESET"
 
 }
