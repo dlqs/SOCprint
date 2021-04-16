@@ -72,8 +72,7 @@ EXAMPLES
     ./socprint.sh list d-lee
 
   To download and run from any directory:
-    sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o $default_script
-    sudo chmod 755 $default_script
+    sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/dlqs/SOCprint/master/install.sh)"
 
 PRINTQUEUES
   Popular places:
@@ -253,7 +252,7 @@ EOF
 q | quota)
     check_username "$@"
 
-    # -t is needed because pusage works with interactive ssh and not without. 
+    # -t is needed because pusage works with interactive ssh and not without.
     # Using -t emulates an interaction session. 'man ssh' for details
     cmd=$( cat <<EOF
   ssh $sshcmd -t "/usr/local/bin/pusage"
