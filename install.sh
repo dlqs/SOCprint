@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Credits: Modified oh-my-zsh install script
-# 1. Handle windows
-# 2.
 
 COMMAND="socprint"
 COMMANDPATH="/usr/local/bin"
