@@ -48,7 +48,7 @@ Check printer selection works
   Using test_user@sunfire.comp.nus.edu.sg ...
     ssh test_user@sunfire.comp.nus.edu.sg "
       cat - > SOCPrint_*; (glob)
-     
+      
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
       rm SOCPrint_*;" < "*/acceptable_format.txt" (glob)
