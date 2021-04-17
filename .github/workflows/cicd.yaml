@@ -22,3 +22,11 @@ jobs:
         run: pip install cram
       - name: run cram tests
         run: cram ./tests/*.t
+
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run ShellCheck
+      uses: ludeeus/action-shellcheck@master
