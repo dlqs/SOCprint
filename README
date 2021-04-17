@@ -1,16 +1,16 @@
 NAME
-  socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
+  socprint - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
 
 SYPNOSIS
-  socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
-  socprint.sh (j|jobs ) [options] <username> <printqueue>
-  socprint.sh (l|list ) [options] <username>
-  socprint.sh (q|quota) [options] <username>
-  socprint.sh (h|help )
+  socprint (p|print) [options] <username> <printqueue> [-|<filepath>]
+  socprint (j|jobs ) [options] <username> <printqueue>
+  socprint (l|list ) [options] <username>
+  socprint (q|quota) [options] <username>
+  socprint (h|help )
 
 QUICKSTART
   To print a file instantly, use the following line:
-  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- print <username> <printqueue> <filepath>
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint | sh -s -- print <username> <printqueue> <filepath>
 
 DESCRIPTION
   This script requires a POSIX™-compliant sh, a sunfire account, and connection to
@@ -50,19 +50,19 @@ OPTIONS
 
 EXAMPLES
   To print from filepath:
-    ./socprint.sh print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
+    ./socprint print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
 
   To print from stdin using the pipe operator:
-    cat ~/d/cs3210_tutorial8.pdf | ./socprint.sh print d-lee psc008-dx
+    cat ~/d/cs3210_tutorial8.pdf | ./socprint print d-lee psc008-dx
 
   To print with shortname, using the redirection operator:
-    ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
+    ./socprint p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
 
   To check jobs:
-    ./socprint.sh jobs d-lee psc008-dx
+    ./socprint jobs d-lee psc008-dx
 
   To list printqueues:
-    ./socprint.sh list d-lee
+    ./socprint list d-lee
 
   To download and run from any directory:
     sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/dlqs/SOCprint/master/install.sh)"
@@ -103,7 +103,7 @@ KEYWORDS
   printers shell command line basement sunfire mac windows linux bsd ben
 
 GENERATE README
-  ./socprint.sh help > README   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README   && ./socprint.sh list d-lee >> README
+  ./socprint help > README   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README   && ./socprint list d-lee >> README
 
 List of valid printqueues, generated with list command on 17 April 2021
 
