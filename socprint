@@ -3,23 +3,23 @@
 set -euf
 
 host='sunfire.comp.nus.edu.sg'
-default_script='/usr/local/bin/socprint.sh'
+default_script='/usr/local/bin/socprint'
 
 usage() {
     cat <<EOF
 NAME
-  socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
+  socprint - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
 
 SYPNOSIS
-  socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
-  socprint.sh (j|jobs ) [options] <username> <printqueue>
-  socprint.sh (l|list ) [options] <username>
-  socprint.sh (q|quota) [options] <username>
-  socprint.sh (h|help )
+  socprint (p|print) [options] <username> <printqueue> [-|<filepath>]
+  socprint (j|jobs ) [options] <username> <printqueue>
+  socprint (l|list ) [options] <username>
+  socprint (q|quota) [options] <username>
+  socprint (h|help )
 
 QUICKSTART
   To print a file instantly, use the following line:
-  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- print <username> <printqueue> <filepath>
+  curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint | sh -s -- print <username> <printqueue> <filepath>
 
 DESCRIPTION
   This script requires a POSIX™-compliant sh, a sunfire account, and connection to
@@ -59,19 +59,19 @@ OPTIONS
 
 EXAMPLES
   To print from filepath:
-    ./socprint.sh print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
+    ./socprint print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
 
   To print from stdin using the pipe operator:
-    cat ~/d/cs3210_tutorial8.pdf | ./socprint.sh print d-lee psc008-dx
+    cat ~/d/cs3210_tutorial8.pdf | ./socprint print d-lee psc008-dx
 
   To print with shortname, using the redirection operator:
-    ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
+    ./socprint p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
 
   To check jobs:
-    ./socprint.sh jobs d-lee psc008-dx
+    ./socprint jobs d-lee psc008-dx
 
   To list printqueues:
-    ./socprint.sh list d-lee
+    ./socprint list d-lee
 
   To download and run from any directory:
     sudo sh -c "\$(curl -fsSL https://raw.githubusercontent.com/dlqs/SOCprint/master/install.sh)"
@@ -112,9 +112,9 @@ KEYWORDS
   printers shell command line basement sunfire mac windows linux bsd ben
 
 GENERATE README
-  ./socprint.sh help > README \
+  ./socprint help > README \
   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README \
-  && ./socprint.sh list d-lee >> README
+  && ./socprint list d-lee >> README
 
 EOF
 exit 0
@@ -136,11 +136,11 @@ check_updates() {
     my_sha=$( (printf "blob %s\0" "$size" && cat ${default_script}) | shasum -a 1 | cut -f 1 -d ' ')
 
   # Pull latest hash from master
-  github_sha=$( curl -m 1 -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint.sh | sed -n 's/.*"sha":\s"\(.*\)",/\1/p' )
+  github_sha=$( curl -m 1 -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/dlqs/SOCprint/contents/socprint | sed -n 's/.*"sha":\s"\(.*\)",/\1/p' )
   if [ "$my_sha" != "$github_sha" ]; then
       msg "Hint: You appear to have downloaded this script to $default_script. There's a newer version available ($( printf '%s' "$my_sha" | head -c 10) v $( printf '%s' "$github_sha" | head -c 10 ))."
       msg "Run the following command to download the new script:"
-      msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh -o $default_script"
+      msg "sudo curl https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint -o $default_script"
   fi
 }
 
@@ -269,6 +269,6 @@ $eval_or_echo_in_dry_run "$cmd"
 
 # Only check update if downloaded to local bin and we're not dry-running, as
 # this could potentially mess tests up.
-[ -f "/usr/local/bin/socprint.sh" ] && [ -z "${dry_run-}" ] && check_updates
+[ -f "/usr/local/bin/socprint" ] && [ -z "${dry_run-}" ] && check_updates
 
 exit 0
