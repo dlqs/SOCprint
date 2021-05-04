@@ -1,0 +1,3 @@
+// To generate the sticker, first set your terminal background color to the desired color
+cat sticker | lolcat | scrot -u sticker.png
+// then cut out the sticker with Paint or GIMP or something
