@@ -16,7 +16,8 @@ Check that bad files print warnings and errors
       
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
-      rm SOCPrint_*;" < "*/incorrect_format" (glob)
+      rm SOCPrint_*;" < "*/incorrect_format"; (glob)
+      star_banner
 
   $ touch $TMPDIR/acceptable_format.txt
   $ $TMPDIR/socprint.sh print --dry-run test_user psc008-dx $TMPDIR/acceptable_format.txt
@@ -27,7 +28,8 @@ Check that bad files print warnings and errors
       
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
-      rm SOCPrint_*;" < "*/acceptable_format.txt" (glob)
+      rm SOCPrint_*;" < "*/acceptable_format.txt"; (glob)
+      star_banner
 
   $ $TMPDIR/socprint.sh print --dry-run test_user psc008-dx $TMPDIR/non_existent_file.txt
   Error: No such file
@@ -40,7 +42,8 @@ Check that bad files print warnings and errors
       
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
-      rm SOCPrint_*;" < "/dev/stdin" (glob)
+      rm SOCPrint_*;" < "/dev/stdin"; (glob)
+      star_banner
 
 Check printer selection works
   $ $TMPDIR/socprint.sh print --dry-run test_user psc008-dx $TMPDIR/acceptable_format.txt 
@@ -51,7 +54,8 @@ Check printer selection works
       
       lpr -P psc008-dx SOCPrint_*; (glob)
       lpq -P psc008-dx;
-      rm SOCPrint_*;" < "*/acceptable_format.txt" (glob)
+      rm SOCPrint_*;" < "*/acceptable_format.txt"; (glob)
+      star_banner
 
   $ $TMPDIR/socprint.sh print --dry-run test_user $TMPDIR/acceptable_format.txt
   Error: <printqueue> should start with 'p', e.g. psc008-dx. See PRINTQUEUES in help.
