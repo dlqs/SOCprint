@@ -1,5 +1,32 @@
 #!/bin/sh
 
+#  ======================================================================
+#
+#  MIT LICENSE
+#
+#  Copyright (c) 2021-present Donald Lee and contributors
+#
+#  Permission is hereby granted, free of charge, to any person obtaining
+#  a copy of this software and associated documentation files (the
+#  "Software"), to deal in the Software without restriction, including
+#  without limitation the rights to use, copy, modify, merge, publish,
+#  distribute, sublicense, and/or sell copies of the Software, and to
+#  permit persons to whom the Software is furnished to do so, subject to
+#  the following conditions:
+#  
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#  
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+#  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+#  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+#  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+#  ======================================================================
+
 set -euf
 
 host='sunfire.comp.nus.edu.sg'
@@ -8,7 +35,7 @@ default_script='/usr/local/bin/socprint.sh'
 usage() {
     cat <<EOF
 NAME
-  socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
+  socprint.sh - POSIX™-compliant, zero-dependency shell script to print in NUS SoC
 
 SYPNOSIS
   socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
@@ -17,8 +44,10 @@ SYPNOSIS
   socprint.sh (h|help )
 
 QUICKSTART
-  To print a file instantly, use the following line:
+  To print a file instantly, copy and paste the following line into your shell:
   curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- print <username> <printqueue> <filepath>
+
+  Alternatively, use the hosted version at https://socprint.xyz
 
 DESCRIPTION
   This script requires a POSIX™-compliant sh, a sunfire account, and connection to
@@ -59,8 +88,8 @@ EXAMPLES
   To print from filepath:
     ./socprint.sh print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
 
-  To print from stdin using the pipe operator:
-    cat ~/d/cs3210_tutorial8.pdf | ./socprint.sh print d-lee psc008-dx
+  To combine with curl and the pipe operator:
+    curl -s https://www.comp.nus.edu.sg/~ooibc/bxtree.pdf | ./socprint.sh print d-lee psc008-dx
 
   To print with shortname, using the redirection operator:
     ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
@@ -109,6 +138,9 @@ CONTRIBUTORS
 KEYWORDS
   how to print NUS SoC National University of Singapore School of Computing
   printers shell command line basement sunfire mac windows linux bsd ben
+
+LICENSE
+  This project is licensed under terms of the MIT License. Full text in source code.
 
 GENERATE README
   ./socprint.sh help > README \

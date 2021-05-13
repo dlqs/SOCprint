@@ -1,16 +1,17 @@
 NAME
-  socprint.sh - POSIX™-compliant, zero-dependency shell script to print stuff in NUS SoC
+  socprint.sh - POSIX™-compliant, zero-dependency shell script to print in NUS SoC
 
 SYPNOSIS
   socprint.sh (p|print) [options] <username> <printqueue> [-|<filepath>]
   socprint.sh (j|jobs ) [options] <username> <printqueue>
   socprint.sh (l|list ) [options] <username>
-  socprint.sh (q|quota) [options] <username>
   socprint.sh (h|help )
 
 QUICKSTART
-  To print a file instantly, use the following line:
+  To print a file instantly, copy and paste the following line into your shell:
   curl -s https://raw.githubusercontent.com/dlqs/SOCprint/master/socprint.sh | sh -s -- print <username> <printqueue> <filepath>
+
+  Alternatively, use the hosted version at https://socprint.xyz
 
 DESCRIPTION
   This script requires a POSIX™-compliant sh, a sunfire account, and connection to
@@ -23,7 +24,6 @@ COMMANDS (shortname|longname)
   (p|print) Print a file at specified printqueue.
   (j|jobs ) List jobs at specified printqueue.
   (l|list ) List all printqueues.
-  (q|quota) Show print quota.
   (h|help ) Show this message.
 
 OPTIONS
@@ -52,8 +52,8 @@ EXAMPLES
   To print from filepath:
     ./socprint.sh print d-lee psc008-dx ~/d/cs3210_tutorial8.pdf
 
-  To print from stdin using the pipe operator:
-    cat ~/d/cs3210_tutorial8.pdf | ./socprint.sh print d-lee psc008-dx
+  To combine with curl and the pipe operator:
+    curl -s https://www.comp.nus.edu.sg/~ooibc/bxtree.pdf | ./socprint.sh print d-lee psc008-dx
 
   To print with shortname, using the redirection operator:
     ./socprint.sh p d-lee psc008-dx < ~/d/cs3210_tutorial8.pdf
@@ -99,10 +99,17 @@ SOURCE
 CONTRIBUTORS
   Donald Lee, Julius Nugroho, Sean Ng
 
+KEYWORDS
+  how to print NUS SoC National University of Singapore School of Computing
+  printers shell command line basement sunfire mac windows linux bsd ben
+
+LICENSE
+  This project is licensed under terms of the MIT License. Full text in source code.
+
 GENERATE README
   ./socprint.sh help > README   && echo "List of valid printqueues, generated with list command on 5 March 2021\n" >> README   && ./socprint.sh list d-lee >> README
 
-List of valid printqueues, generated with list command on 26 March 2021
+List of valid printqueues, generated with list command on 5 March 2021
 
 psts
 psts-sx
