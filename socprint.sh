@@ -28,7 +28,7 @@
 #  ======================================================================
 
 set -euf
-
+export LC_ALL=C
 host='sunfire.comp.nus.edu.sg'
 default_script='/usr/local/bin/socprint.sh'
 
@@ -260,8 +260,7 @@ case "${command-}" in
         else
             [ ! -f "${filepath-}" ] && die "Error: No such file"
             # Warn if filetype is unexpected
-            filetype=$( file -b --mime-type "${filepath}" )
-            [ "${filetype}" != 'application/pdf' ] && [ "$( printf '%s' "$filetype" | head -c 4 )" != 'text' ] && msg "Warning: File is not PDF or text. Print behaviour is undefined."
+            file "${filepath}" | cut -f 2 -d ':' | grep -Eqv '(PDF|text)' && msg "Warning: File is not PDF or text. Print behaviour is undefined."
         fi
 
   # Generate random 8 character alphanumeric string in a POSIX compliant way
