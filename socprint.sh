@@ -29,7 +29,7 @@
 
 set -euf
 export LC_ALL=C
-host='sunfire.comp.nus.edu.sg'
+host='stu.comp.nus.edu.sg'
 default_script='/usr/local/bin/socprint.sh'
 
 usage() {
@@ -50,7 +50,7 @@ QUICKSTART
   Alternatively, use the hosted version at https://socprint.xyz
 
 DESCRIPTION
-  This script requires a POSIX™-compliant sh, a sunfire account, and connection to
+  This script requires a POSIX™-compliant sh, a NUS SoC account, and connection to
   SoC wifi.
 
   Besides the above, this script has zero-dependencies, is portable, and handles text/byte streams. This makes printing
@@ -64,7 +64,7 @@ COMMANDS (shortname|longname)
 
 OPTIONS
   <username>
-    Sunfire username, without the @sunfire.comp.nus.edu.sg part.
+    NUS SoC account username.
 
   <printqueue>
     Printer + suffix. See PRINTQUEUES for commonly-used printers.
@@ -75,7 +75,7 @@ OPTIONS
 
   -i, --identity-file <filepath>
     (optional) Additional identity file to use with ssh. Skip if you already set
-    up sunfire identity files for ssh.
+    up identity files for ssh.
 
   -2
     (optional) Prints every two logical pages onto one physical page.
@@ -115,10 +115,10 @@ PRINTQUEUES
 
 IMPLEMENTATION
   Roughly speaking, the print command will:
-  1. Login to sunfire using ssh.
+  1. Login to stu.comp.nus.edu.sg using ssh.
      You will be prompted for your password, unless your identity files are set up.
      This script *does not* save/record your password.
-  2. Copy the file into your home directory in sunfire, to a temporary file.
+  2. Copy the file into your home directory in stu, to a temporary file.
   3. Submit your job to the printqueue.
   4. List the printqueue. You job *should* appear. If not, something has gone wrong.
   5. Remove the temporary file.
@@ -137,7 +137,7 @@ CONTRIBUTORS
 
 KEYWORDS
   how to print NUS SoC National University of Singapore School of Computing
-  printers shell command line basement sunfire mac windows linux bsd ben
+  printers shell command line basement mac windows linux bsd ben
 
 LICENSE
   This project is licensed under terms of the MIT License. Full text in source code.
